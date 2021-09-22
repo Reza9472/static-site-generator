@@ -47,6 +47,21 @@ async function emptyDist () {
   }
 }
 
+function parseMarkdown(markdownText) {
+	const htmlText = markdownText
+		.replace(/^### (.*$)/gim, '<h3>$1</h3>')
+		.replace(/^## (.*$)/gim, '<h2>$1</h2>')
+		.replace(/^# (.*$)/gim, '<h1>$1</h1>')
+		.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+		.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+		.replace(/\*(.*)\*/gim, '<i>$1</i>')
+		.replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' />")
+		.replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2'>$1</a>")
+		.replace(/\n$/gim, '<br /><br />')
+
+	return htmlText.trim()
+}
+
 // fn to write HTML format 
 async function writeHTML(data, filename) {
   
@@ -62,8 +77,13 @@ async function writeHTML(data, filename) {
 
   if (data.length){
     let content = data.split("\n\n");
+
     content.forEach((line)=> {
-      datatoHTML +=`<p>${line}</p>\n`
+
+      datatoHTML += parseMarkdown(line)
+
+      // datatoHTML +=`<p>${line}</p>\n`
+
     })
 
   }
